@@ -75,5 +75,6 @@ def extract_layers(gcode_file):
 
 
 
-extract_layers("test.txt")
+extract_layers("test.txt") # file gcode
+
             
