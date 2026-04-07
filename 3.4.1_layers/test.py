@@ -4,6 +4,9 @@ import os
 
 #SEGMENT's size 90*90mm
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir, "test.txt")
+
 def save_heatmap(output_file, layer_name, heatbed):
     output_file.write(layer_name)
     for row in heatbed[::-1]:
@@ -82,6 +85,4 @@ def extract_layers(gcode_file):
             
             save_heatmap(output_file, layer_name, heatbed)
 
-extract_layers("test.txt") # file gcode
-
-            
+extract_layers(file_path) # file gcode
