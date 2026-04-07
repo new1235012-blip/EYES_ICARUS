@@ -1,7 +1,15 @@
 import re
 import numpy as np
+import os
 
 #SEGMENT's size 90*90mm
+
+def save_heatmap(output_file, layer_name, heatbed):
+    output_file.write(layer_name)
+    for row in heatbed[::-1]:
+        output_file.write(str(row) + '\n')
+
+    output_file.write('\n')
 
 def extract_coordinates(line):
     parts = line.split()
@@ -20,29 +28,28 @@ def extract_coordinates(line):
 def extract_layers(gcode_file):
     print("Đang đọc file G-code: ", gcode_file)
 
-    heatbed = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],  
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ]
+    base_name = os.path.splitext(gcode_file)[0]
+    save_name = f"{base_name}_layers.txt"
+
+    heatbed = np.zeros((4, 4), dtype=int)
     layer_name = ""
     cur_X = cur_Y = cur_E = 0.0
     processed_layer = False
 
-    with open(gcode_file, 'r') as file:
+    with open(gcode_file, 'r') as file, open(save_name, 'w', encoding='utf-8') as output_file:
         for line in file:
-
             if line.startswith("; layer"):
-
                 if processed_layer:
                     print(layer_name)
                     for row in heatbed[::-1]:
                         print(row)
 
+                    save_heatmap(output_file, layer_name, heatbed)
+                    
+
                 layer_name = line
                 print("Đang xử lý: ", layer_name)
-                heatbed = np.zeros((4, 4))
+                heatbed = np.zeros((4, 4), dtype=int)
                 processed_layer = True
             
             elif line.startswith("G92") and "E" in line:
@@ -68,12 +75,12 @@ def extract_layers(gcode_file):
                             heatbed[row][col] = 1
                     cur_E = new_E
             
-    if processed_layer:
-        print(layer_name)
-        for row in heatbed[::-1]:                        
-            print(row)
-
-
+        if processed_layer:
+            print(layer_name)
+            for row in heatbed[::-1]:                        
+                print(row)
+            
+            save_heatmap(output_file, layer_name, heatbed)
 
 extract_layers("test.txt") # file gcode
 
