@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from pathlib import Path
 
 #SEGMENT's size 90*90mm
 
@@ -27,15 +28,15 @@ def extract_coordinates(line):
 def extract_layers(gcode_file):
     print("Đang đọc file G-code: ", gcode_file)
 
-    base_name = os.path.splitext(gcode_file)[0]
-    save_name = f"{base_name}_layers.txt"
-
+    save_file = Path(gcode_file).parent.with_name("output") / f"{Path(gcode_file).stem}_layers.txt"
+    save_file.parent.mkdir(exist_ok=True)
+    
     heatbed = np.zeros((4, 4), dtype=int)
     layer_name = ""
     cur_X = cur_Y = cur_E = 0.0
     processed_layer = False
 
-    with open(gcode_file, 'r') as file, open(save_name, 'w', encoding='utf-8') as output_file:
+    with open(gcode_file, 'r') as file, open(save_file, 'w', encoding='utf-8') as output_file:
         for line in file:
             if line.startswith("; layer"):
                 if processed_layer:
