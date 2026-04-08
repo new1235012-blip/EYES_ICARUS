@@ -26,7 +26,6 @@ def extract_coordinates(line):
     
 
 def extract_layers(gcode_file):
-    print("Đang đọc file G-code: ", gcode_file)
 
     save_file = Path(gcode_file).parent.with_name("output") / f"{Path(gcode_file).stem}_layers.txt"
     save_file.parent.mkdir(exist_ok=True)
@@ -40,15 +39,8 @@ def extract_layers(gcode_file):
         for line in file:
             if line.startswith("; layer"):
                 if processed_layer:
-                    print(layer_name)
-                    for row in heatbed[::-1]:
-                        print(row)
-
                     save_heatmap(output_file, layer_name, heatbed)
-                    
-
-                layer_name = line
-                print("Đang xử lý: ", layer_name)
+                
                 heatbed = np.zeros((4, 4), dtype=int)
                 processed_layer = True
             
@@ -76,8 +68,4 @@ def extract_layers(gcode_file):
                     cur_E = new_E
             
         if processed_layer:
-            print(layer_name)
-            for row in heatbed[::-1]:                        
-                print(row)
-            
             save_heatmap(output_file, layer_name, heatbed)
