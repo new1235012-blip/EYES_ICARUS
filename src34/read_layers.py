@@ -40,7 +40,7 @@ def extract_layers(gcode_file):
             if line.startswith("; layer"):
                 if processed_layer:
                     save_heatmap(output_file, layer_name, heatbed)
-                
+                    
                 heatbed = np.zeros((4, 4), dtype=int)
                 processed_layer = True
             
@@ -51,6 +51,9 @@ def extract_layers(gcode_file):
                         cur_E = float(p[1:])
 
             elif line.startswith("G1") or line.startswith("G0"):
+                if 'E' not in line or ('X' not in line and 'Y' not in line):
+                    continue
+
                 new_X, new_Y, new_E = extract_coordinates(line)
                 
                 if new_X is not None:
