@@ -4,8 +4,8 @@
 #include <LittleFS.h>
 
 //wifi
-const char *name = "VietThang";
-const char *pass = "tram5122008";
+const char *name = "test"
+const char *pass = ""
 
 WebServer server(80);
 File upfile;
