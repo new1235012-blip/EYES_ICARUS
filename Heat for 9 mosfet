@@ -1,0 +1,107 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+/* =========================================================
+   DS18B20 + 9 MOSFET HW517
+   Arduino UNO R3
+   ========================================================= */
+
+/* ================= DS18B20 ================= */
+
+#define ONE_WIRE_BUS 2
+
+OneWire oneWire(ONE_WIRE_BUS);
+
+DallasTemperature sensors(&oneWire);
+
+/* ================= MOSFET PINS ================= */
+
+#define MOSFET1 3
+#define MOSFET2 4
+#define MOSFET3 5
+#define MOSFET4 6
+#define MOSFET5 7
+#define MOSFET6 8
+#define MOSFET7 9
+#define MOSFET8 10
+#define MOSFET9 11
+
+/* ================= SETUP ================= */
+
+void setup()
+{
+    pinMode(MOSFET1, OUTPUT);
+    pinMode(MOSFET2, OUTPUT);
+    pinMode(MOSFET3, OUTPUT);
+    pinMode(MOSFET4, OUTPUT);
+    pinMode(MOSFET5, OUTPUT);
+    pinMode(MOSFET6, OUTPUT);
+    pinMode(MOSFET7, OUTPUT);
+    pinMode(MOSFET8, OUTPUT);
+    pinMode(MOSFET9, OUTPUT);
+
+    /* Bật tất cả MOSFET ban đầu */
+
+    digitalWrite(MOSFET1, HIGH);
+    digitalWrite(MOSFET2, HIGH);
+    digitalWrite(MOSFET3, HIGH);
+    digitalWrite(MOSFET4, HIGH);
+    digitalWrite(MOSFET5, HIGH);
+    digitalWrite(MOSFET6, HIGH);
+    digitalWrite(MOSFET7, HIGH);
+    digitalWrite(MOSFET8, HIGH);
+    digitalWrite(MOSFET9, HIGH);
+
+    sensors.begin();
+
+    Serial.begin(9600);
+}
+
+/* ================= LOOP ================= */
+
+void loop()
+{
+    sensors.requestTemperatures();
+
+    float temp = sensors.getTempCByIndex(0);
+
+    Serial.print("Temperature: ");
+    Serial.println(temp);
+
+    /* =========================================
+       Nếu nhiệt độ >= 30°C
+       -> tắt toàn bộ MOSFET
+       ========================================= */
+
+    if(temp >= 30.0)
+    {
+        digitalWrite(MOSFET1, LOW);
+        digitalWrite(MOSFET2, LOW);
+        digitalWrite(MOSFET3, LOW);
+        digitalWrite(MOSFET4, LOW);
+        digitalWrite(MOSFET5, LOW);
+        digitalWrite(MOSFET6, LOW);
+        digitalWrite(MOSFET7, LOW);
+        digitalWrite(MOSFET8, LOW);
+        digitalWrite(MOSFET9, LOW);
+    }
+    else
+    {
+        /* =====================================
+           Nếu nhiệt độ < 30°C
+           -> bật toàn bộ MOSFET
+           ===================================== */
+
+        digitalWrite(MOSFET1, HIGH);
+        digitalWrite(MOSFET2, HIGH);
+        digitalWrite(MOSFET3, HIGH);
+        digitalWrite(MOSFET4, HIGH);
+        digitalWrite(MOSFET5, HIGH);
+        digitalWrite(MOSFET6, HIGH);
+        digitalWrite(MOSFET7, HIGH);
+        digitalWrite(MOSFET8, HIGH);
+        digitalWrite(MOSFET9, HIGH);
+    }
+
+    delay(100);
+}
